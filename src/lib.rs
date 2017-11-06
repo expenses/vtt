@@ -3,7 +3,7 @@ extern crate nom;
 
 mod parsing;
 
-use parsing::parse_from_slice;
+pub use parsing::parse_from_slice;
 
 use nom::Needed;
 use nom::simple_errors::Err;
@@ -15,6 +15,7 @@ use std::io::{self, Read};
 // The magic number at the start of each file
 const MAGIC_NUMBER: &str = "WEBVTT";
 
+/// A start/end time of a vtt subtitle
 #[derive(Debug, PartialEq)]
 pub struct Time {
     pub hours: u8,
@@ -29,6 +30,7 @@ impl Display for Time {
     }
 }
 
+/// A subtitle and associated metadata
 #[derive(Debug)]
 pub struct Subtitle {
     pub start: Time,
@@ -49,6 +51,7 @@ impl Display for Subtitle {
     }
 }
 
+/// The subtitle file and metadata
 #[derive(Debug)]
 pub struct Vtt {
     pub subtitles: Vec<Subtitle>,
@@ -68,10 +71,11 @@ impl Display for Vtt {
     }
 }
 
+/// Errors that can be raised by reaading or parsing a vtt file
 #[derive(Debug)]
 pub enum Error {
     ParsingError(Err),
-    Incomplete(Needed),
+    ParsingIncomplete(Needed),
     IO(io::Error)
 }
 
@@ -81,7 +85,8 @@ impl From<io::Error> for Error {
     }
 }
 
-fn parse_from_file(filename: &str) -> Result<Vtt, Error> {
+/// Parse a vtt file from a file buffer
+pub fn parse_from_file(filename: &str) -> Result<Vtt, Error> {
     let mut file = File::open(filename)?;
     let mut buffer = Vec::new();
     file.read_to_end(&mut buffer)?;

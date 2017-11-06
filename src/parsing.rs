@@ -86,10 +86,11 @@ named!(parse_vtt<Vtt>, do_parse!(
     })
 ));
 
+/// Parse a vtt file from a byte slice
 pub fn parse_from_slice(slice: &[u8]) -> Result<Vtt, Error> {
     match parse_vtt(slice) {
         IResult::Done(_, vtt) => Ok(vtt),
-        IResult::Incomplete(needed) => Err(Error::Incomplete(needed)),
+        IResult::Incomplete(needed) => Err(Error::ParsingIncomplete(needed)),
         IResult::Error(err) => Err(Error::ParsingError(err))
     }
 }
